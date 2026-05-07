@@ -7,6 +7,7 @@ from src.domain.models import DocumentChunk
 
 from src.domain.interfaces import IDocumentLoader
 
+
 class ConstitutionScraper(IDocumentLoader):
     BASE_URL = "https://www.prezydent.pl"
     START_URL = "https://www.prezydent.pl/prawo/konstytucja-rp"
@@ -49,7 +50,7 @@ class ConstitutionScraper(IDocumentLoader):
 
         for link in links:
             title = link.get_text(strip=True)
-            href = link.get("href")
+            href = str(link.get("href"))
             if href and "rozdzial-" in href:
                 full_url = self.BASE_URL + href if href.startswith("/") else href
                 if not any(c["url"] == full_url for c in chapters):

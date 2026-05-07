@@ -25,7 +25,7 @@ class ConstitutionLoader:
             # Wykrywanie artykułu
             article_match = re.search(r"Art\.\s+(\d+)\.", line)
             if article_match:
-                # Zapisz poprzedni artykuł jeśli istnieje
+                # Dodaj poprzedni artykuł do listy, jeśli istnieje
                 if current_article_num:
                     chunks.append(
                         DocumentChunk(
@@ -33,7 +33,7 @@ class ConstitutionLoader:
                             metadata={
                                 "article": current_article_num,
                                 "chapter": current_chapter,
-                                "tags": ["konstytucja", "prawo", current_chapter.lower()],
+                                "tags": [current_chapter.lower()],
                             },
                         )
                     )
@@ -52,7 +52,7 @@ class ConstitutionLoader:
                     metadata={
                         "article": current_article_num,
                         "chapter": current_chapter,
-                        "tags": ["konstytucja", "prawo", current_chapter.lower()],
+                        "tags": [current_chapter.lower()],
                     },
                 )
             )

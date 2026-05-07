@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -19,12 +18,11 @@ class GeminiLLM(ILLM):
         self.client = genai.Client(api_key=self.api_key)
         self.system_instruction = "Jesteś ekspertem od Konstytucji RP. Odpowiadaj WYŁĄCZNIE na podstawie podanego kontekstu. Zawsze podawaj numer artykułu. Jeśli nie znajdziesz odpowiedzi — powiedz 'Nie znalazłem odpowiedzi w Konstytucji.'"
 
-    def generate_response(self, prompt: str, system_instruction: Optional[str] = None) -> str:
+    def generate_response(self, prompt: str, system_instruction: str | None = None) -> str:
         try:
             if not self.api_key:
                 raise ValueError("Brak GEMINI_API_KEY w pliku .env")
 
-            # Używamy przekazanej instrukcji lub domyślnej
             final_instruction = system_instruction or self.system_instruction
 
             response = self.client.models.generate_content(

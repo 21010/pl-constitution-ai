@@ -12,11 +12,7 @@ class QueryEngine:
         refinement_system_prompt = "Jesteś ekspertem od polskiego prawa. Przekształć pytanie użytkownika na 3-4 słowa kluczowe lub krótką frazę prawniczą, która pomoże znaleźć odpowiednie artykuły w Konstytucji RP. Zwróć TYLKO te słowa kluczowe, oddzielone przecinkami."
 
         try:
-            # Przekazujemy instrukcję jako system_instruction dla lepszej separacji zadań
-            refined = self.llm.generate_response(
-                prompt=f"PYTANIE: {question}\nSŁOWA KLUCZOWE:", system_instruction=refinement_system_prompt
-            )
-            # Usuwamy ewentualne zbędne cudzysłowy i czyścimy tekst
+            refined = self.llm.generate_response(prompt=f"PYTANIE: {question}\nSŁOWA KLUCZOWE:", system_instruction=refinement_system_prompt)
             refined = refined.replace('"', "").replace("'", "").strip()
             print(f"Refinement: '{question}' -> '{refined}'")
             return refined
@@ -31,7 +27,7 @@ class QueryEngine:
             # 1. Refinement - optymalizacja zapytania
             search_query = self._refine_query(question)
 
-            # 2. Wyszukaj kontekst (używamy zoptymalizowanego zapytania)
+            # 2. Wyszukiwanie kontekstu w bazie
             context_chunks = self.vector_store.search(search_query, k=5)
 
             if not context_chunks:
@@ -41,14 +37,14 @@ class QueryEngine:
                     context_used=[],
                 )
 
-            # 3. Skonstruuj prompt z wykorzystaniem tagów
+            # 3. Konstruowanie promptu z wykorzystaniem tagów
             context_text = ""
             for i, c in enumerate(context_chunks):
                 tags = c.metadata.get("tags", [])
                 tags_str = f" [Tematy: {', '.join(tags)}]" if tags else ""
                 context_text += f"--- FRAGMENT {i + 1} (Art. {c.metadata['article']}){tags_str} ---\n{c.content}\n\n"
 
-            # Skonstruowany prompt - instrukcje systemowe są już w GeminiLLM, tu podajemy tylko zadanie
+            # Skonstruowany prompt
             prompt = f"""Na podstawie poniższego kontekstu z Konstytucji RP, odpowiedz na pytanie użytkownika.
 
 KONTEKST:
@@ -59,10 +55,10 @@ PYTANIE:
 
 ODPOWIEDŹ:"""
 
-            # 4. Generuj odpowiedź
+            # 4. Generowanie odpowiedzi
             answer = self.llm.generate_response(prompt)
 
-            # 5. Wyciągnij źródła
+            # 5. Wyciaganie źródeł z kontekstu
             sources = sorted(list(set([f"Art. {c.metadata['article']}" for c in context_chunks])))
 
             return QueryResponse(answer=answer, sources=sources, context_used=context_chunks)

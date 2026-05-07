@@ -18,8 +18,7 @@ class TagList(BaseModel):
 
 class TagGenerator(ITagGenerator):
     """
-    Generuje dokładnie 3 tagi przy użyciu Gemini Structured Output.
-    Szybkie, niezawodne i darmowe w ramach limitów Google AI Studio.
+    Generuje tagi przy użyciu Gemini Structured Output.
     """
 
     def __init__(self, model_id: str = "gemini-3.1-flash-lite-preview", api_key: str | None = None):

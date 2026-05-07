@@ -14,7 +14,7 @@ class GeminiEmbedder(IEmbedder):
     Obsługuje dynamiczne określanie wymiaru modelu oraz prostą logikę ponawiania przy błędach związanych z limitami API.
     """
 
-    def __init__(self, model_name: str = "text-embedding-004", api_key: str | None = None):
+    def __init__(self, model_name: str = "gemini-embedding-2", api_key: str | None = None):
         self.model_name = model_name
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         if not self.api_key:
@@ -30,7 +30,7 @@ class GeminiEmbedder(IEmbedder):
             if res and res.embeddings and res.embeddings[0].values is not None:
                 self._dimension = len(res.embeddings[0].values)
             else:
-                self._dimension = 768
+                self._dimension = 768  # Domyślny wymiar dla gemini-embedding-2
 
         return self._dimension
 
@@ -84,7 +84,7 @@ class GeminiEmbedder(IEmbedder):
                             break
                 except Exception as e:
                     if "429" in str(e) and attempt < 2:
-                        time.sleep(1)  # Krótkie czekanie przy RPM
+                        time.sleep(1)  # Opóźnienie przed ponowną próbą
                         continue
                     print(f"Błąd przy fragmencie {i}: {e}")
                     break
