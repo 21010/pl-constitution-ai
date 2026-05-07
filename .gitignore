@@ -7,9 +7,23 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv
-.env
+.venv/
+env/
+venv/
 
-.vscode
+# Environment variables (Secrets)
+.env
+.env.local
+
+# IDEs and Tools
+.vscode/
+.idea/
 .python-version
+
+# Project specific data (DANGER: sensitive data)
+data/
+*.sqlite3
+*.log
+
+# Project instructions
 gemini.md
