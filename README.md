@@ -12,7 +12,7 @@ System składa się z dwóch głównych potoków (pipelines) zaprojektowanych zg
 ### 1. Pipeline Indeksowania (Indexing)
 * **Scraping:** Automatyczne pobieranie aktualnego tekstu Konstytucji ze strony prezydent.pl.
 * **Tagowanie AI:** Każdy artykuł jest analizowany przez model Gemini w celu wygenerowania słów kluczowych (tagów), co poprawia późniejszą precyzję wyszukiwania.
-* **Embeddingi:** Tekst jest zamieniany na wektory matematyczne przy użyciu modelu `text-embedding-004`.
+* **Embeddingi:** Tekst jest zamieniany na wektory matematyczne przy użyciu modelu `gemini-embedding-2`.
 * **Vector Store:** Wektory wraz z metadanymi trafiają do bazy **ChromaDB**.
 
 ### 2. Pipeline Zapytań (Querying)
@@ -22,7 +22,7 @@ System składa się z dwóch głównych potoków (pipelines) zaprojektowanych zg
 
 ## Technologie
 * **Język:** Python 3.13+
-* **LLM & Embeddings:** Google Gemini API
+* **LLM & Embeddings:** Google Gemini API (model `gemini-3.1-flash-lite-preview` & `gemini-embedding-2`)
 * **Baza Wektorowa:** ChromaDB
 * **API Framework:** FastAPI
 * **Frontend:** Vanilla JS / HTML / CSS
