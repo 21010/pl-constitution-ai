@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konstytucja RP - System RAG</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        button { padding: 12px 24px; background-color: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #95a5a6; }
+        #response { margin-top: 30px; display: none; }
+        .answer { font-size: 18px; line-height: 1.6; color: #333; border-left: 4px solid #3498db; padding-left: 15px; margin-bottom: 15px; }
+        .sources { font-size: 14px; color: #7f8c8d; }
+        .loader { display: none; text-align: center; margin: 20px 0; font-style: italic; color: #3498db; }
+        .index-btn { background-color: #27ae60; margin-bottom: 20px; font-size: 12px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇵🇱 Konstytucja RP - Chat AI</h1>
+        
+        <div style="text-align: right;">
+            <button class="index-btn" onclick="triggerIndex()">Zaindeksuj Konstytucję</button>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="question" placeholder="Zadaj pytanie dotyczące Konstytucji..." onkeypress="if(event.key === 'Enter') ask()">
+            <button id="send-btn" onclick="ask()">Zapytaj</button>
+        </div>
+
+        <div id="loader" class="loader">Aalizuje Konstytucję...</div>
+
+        <div id="response">
+            <div class="answer" id="answer-text"></div>
+            <div class="sources" id="sources-list"></div>
+        </div>
+    </div>
+
+    <script>
+        async function ask() {
+            const question = document.getElementById('question').value;
+            if (!question) return;
+
+            const btn = document.getElementById('send-btn');
+            const loader = document.getElementById('loader');
+            const responseDiv = document.getElementById('response');
+            
+            btn.disabled = true;
+            loader.style.display = 'block';
+            responseDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+                const data = await response.json();
+                
+                document.getElementById('answer-text').innerText = data.answer;
+                document.getElementById('sources-list').innerText = "Źródła: " + data.sources.join(', ');
+                responseDiv.style.display = 'block';
+            } catch (error) {
+                alert('Błąd podczas pobierania odpowiedzi.');
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        async function triggerIndex() {
+            if (!confirm("Czy chcesz zaindeksować Konstytucję? To pobierze dane ze strony prezydent.pl.")) return;
+            try {
+                const response = await fetch('/index', { method: 'POST' });
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                alert('Błąd podczas uruchamiania indeksowania.');
+            }
+        }
+    </script>
+</body>
+</html>
