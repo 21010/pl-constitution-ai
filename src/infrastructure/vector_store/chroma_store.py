@@ -35,7 +35,7 @@ class ChromaVectorStore(IVectorStore):
         print("Wysyłanie wektorów do ChromaDB...")
         self.collection.add(
             ids=ids,
-            documents=[doc.content for doc in documents],  # Zapisujemy czystą treść do wyświetlania
+            documents=[doc.content for doc in documents],
             metadatas=metadatas,
             embeddings=embeddings,
         )

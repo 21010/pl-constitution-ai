@@ -37,7 +37,7 @@ class QueryEngine:
                     context_used=[],
                 )
 
-            # 3. Konstruowanie promptu z wykorzystaniem tagów
+            # 3. Augumentacja promptu
             context_text = ""
             for i, c in enumerate(context_chunks):
                 tags = c.metadata.get("tags", [])
@@ -57,6 +57,7 @@ ODPOWIEDŹ:"""
 
             # 4. Generowanie odpowiedzi
             answer = self.llm.generate_response(prompt)
+            print(f"Odpowiedź: {answer}")
 
             # 5. Wyciaganie źródeł z kontekstu
             sources = sorted(list(set([f"Art. {c.metadata['article']}" for c in context_chunks])))
